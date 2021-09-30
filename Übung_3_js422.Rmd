@@ -1,0 +1,97 @@
+#Grundlegendes Neztwerk einlesen
+```{r Dichte in Teilnetzwerken vergleichen}
+# Berechnung der Dichte des Netzwerks s
+library(igraph)
+el <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/edges.csv", header=T, as.is=T, sep = ",")
+nodes <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/nodes.csv", header=T, as.is=T, sep = ",")
+edgematrix <-as.matrix(el)
+s <- graph_from_data_frame(d=edgematrix, vertices=nodes, directed=T)
+E(s)$arrow.size <- .2
+
+# Teilnetzwerke erstellen
+work <- subgraph.edges(s, E(s)[relation==1]) 
+help <- subgraph.edges(s, E(s)[relation==2]) 
+love <- subgraph.edges(s, E(s)[relation==3])
+
+```
+
+#Dichte der Männer- und Frauennetzwerke zur Zusammenarbeit
+```{r Task Dichte zwischen Männer und Frauennetzwerken}
+
+s_comp <-decompose.graph(s) 
+s_comp
+
+s_comp1 <- s_comp[[1]] 
+s_comp2 <- s_comp[[2]]
+
+s_comp1 
+s_comp2
+
+plot(s_comp1)
+
+plot(s_comp2)
+
+work_1 <- subgraph.edges(s_comp1, E(s_comp1)[relation==1])
+
+work_male_1 <- delete_vertices(work_1, V(work_1)[sex != "2"])
+work_male_1
+plot(work_male_1, vertex.color="lightblue", main="Zusammenarbeit Männer Cluster1")
+
+
+work_fem_1 <- delete_vertices(work_1, V(work_1)[sex != "1"])
+work_fem_1
+plot(work_fem_1, vertex.color="pink", main="Zusammenarbeit Frauen Cluster1")
+
+work_2 <- subgraph.edges(s_comp2, E(s_comp2)[relation==1])
+work_fem_2 <- delete_vertices(work_2, V(work_2)[sex != "1"])
+work_fem_2
+plot(work_fem_2, vertex.color="yellow", main="Zusammenarbeit Frauen Cluster 2")
+
+
+edge_density(work_male_1)
+edge_density(work_fem_1)
+edge_density(work_fem_2)
+```
+#Antwort: Die Dichte des Männer-Arbeits-Teilnetzwerks 1 ist (gerundet) 6,67 Porzent, die des Frauen-Arbeits-Teilnetzwerks 1 ist 7,5 Prozent. Teilnetzwerk 2 besteht nur aus Frauen, die Dichte liegt hier bei genau 40 Prozent.
+
+#Degree-Anaylse:
+##work
+Der zentralste Knoten ist No. 19. Die Zentralisierung liegt bei 10,8 Prozent.
+##help
+Der zentralse Knoten ist No.18. Die Zentralisierung liegt bei 29,7 Prozent.
+##love
+Der Zentralse Knoten ist No.23. Die Zentraliseirung liegt bei rund 18 Prozent (100%=506 Knoten).
+```{r}
+work <- subgraph.edges(s, E(s)[relation==1]) 
+help <- subgraph.edges(s, E(s)[relation==2]) 
+love <- subgraph.edges(s, E(s)[relation==3])
+
+dw <-degree(work)
+dw
+which.max(dw)
+degree(work, mode="in")
+centr_degree(work, mode="in", normalized=T)
+indw <- degree(work, mode="in")
+indw
+
+dh <- degree(help)
+dh
+which.max(dh)
+degree(help, mode="in")
+centr_degree(help, mode="in", normalized=T)
+indh <- degree(help, mode="in")
+indh
+
+dl <- degree(love)
+dl
+which.max(dl)
+degree(love, mode="in")
+centr_degree(love, mode="in", normalized=T)
+indl <- degree(love, mode="in")
+indl
+
+
+
+```
+
+

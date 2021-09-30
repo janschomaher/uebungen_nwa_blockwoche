@@ -1,0 +1,26 @@
+---
+title: "Übung_Netwerkanalyse_js422"
+author: "jan"
+date: "9/28/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(igraph)
+el <- read.csv("https://raw.githubusercontent.com/janschomaher/netzwerkanalyse/main/el_rick.csv?token=ARL4VWGID3AFYBUCJOEH4ULBKLJJO", header=T, as.is=T, sep = ",")
+nodes <- read.csv("https://raw.githubusercontent.com/janschomaher/netzwerkanalyse/main/nl_rick2.csv", header=T, as.is=T, sep = ",")
+edgematrix <-as.matrix(el)
+rick_morty <- graph_from_data_frame(d=edgematrix, vertices=nodes, directed=T)
+rick_morty
+
+plot(rick_morty,
+edge.width=E(rick_morty)$weight,		
+edge.arrow.size=.8,
+edge.color="black",
+main="Rick and Morty: Wer ist auf wen sauer?",
+sub="gewichtet")
+```
+

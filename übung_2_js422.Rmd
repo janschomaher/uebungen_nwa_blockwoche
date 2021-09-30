@@ -1,0 +1,229 @@
+---
+title: "übung_2_js422"
+author: "jan"
+date: "9/28/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Netzwerkattribute_verstehen}
+library(igraph)
+el <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/edges.csv", header=T, as.is=T, sep = ",")
+nodes <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/nodes.csv", header=T, as.is=T, sep = ",")
+edgematrix <-as.matrix(el)
+s <- graph_from_data_frame(d=edgematrix, vertices=nodes, directed=T)
+s
+```
+#Auflistung aller Knoten-Attribute
+```{r}
+list.vertex.attributes(s)
+```
+#Auflistung aller Kanten-Attribute
+```{r}
+list.edge.attributes(s)
+```
+#Werte für das Edge-Attribut "Relation"
+```{r}
+edge.attributes(s)$relation
+```
+#Werte für das Vertex-Attribut "sex"
+
+```{r}
+vertex.attributes(s)$sex
+```
+#Titel der Abbildung und Algorithmus ändern
+```{r}
+plot(s,
+     layout=layout_with_fr,
+     main="Visualisierung eines Netzwerks")
+```
+#Neue Farbgebung
+
+```{r}
+
+?igraph.plotting
+
+V(s)$color <- "darkblue"
+V(s)$frame.color <- "lightblue"
+E(s)$arrow.size <- .3
+E(s)$color <- "lightblue"
+
+plot(s,
+     layout=layout_with_kk,
+     main ="Visualisierung in blau",
+     sub="frei nach Yves Klein")
+
+```
+#Netzwerk erneut einlesen
+```{r}
+library(igraph)
+el <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/edges.csv", header=T, as.is=T, sep = ",")
+nodes <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/nodes.csv", header=T, as.is=T, sep = ",")
+edgematrix <-as.matrix(el)
+s <- graph_from_data_frame(d=edgematrix, vertices=nodes, directed=T)
+s
+
+par(mar=c(0,0,0,0))
+V(s)$color <- "lightblue"
+
+plot(s,
+     asp=0, 
+     layout=layout_with_kk,
+     vertex.size=10,
+     edge.arrow.size=.4,
+     edge.color="grey50",
+     edge.curved=curve_multiple(s))
+
+par(mar=c(0,0.5,0.5,0)) 
+```
+#Eigenes Netzwerk visualisieren
+
+```{r}
+library(igraph)
+el <- read.csv("https://raw.githubusercontent.com/janschomaher/netzwerkanalyse/main/el_rick.csv?token=ARL4VWGID3AFYBUCJOEH4ULBKLJJO", header=T, as.is=T, sep = ",")
+nodes <- read.csv("https://raw.githubusercontent.com/janschomaher/netzwerkanalyse/main/nl_rick2.csv", header=T, as.is=T, sep = ",")
+edgematrix <-as.matrix(el)
+rick_morty <- graph_from_data_frame(d=edgematrix, vertices=nodes, directed=T)
+rick_morty
+
+par(mar=c(1,1,1,1)) 
+V(rick_morty)$color <- "lightblue"
+
+plot(rick_morty,
+layout=layout_with_fr,
+vertex.size=25,
+edge.width=E(rick_morty)$weight,		
+edge.arrow.size=.8,
+edge.color="black",
+main="Rick and Morty: Wer ist auf wen sauer?",
+sub="gewichtet")
+```
+#Erstellung Teilnetzwerk Help
+
+```{r}
+library(igraph)
+el <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/edges.csv", header=T, as.is=T, sep = ",")
+nodes <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/nodes.csv", header=T, as.is=T, sep = ",")
+edgematrix <-as.matrix(el)
+s <- graph_from_data_frame(d=edgematrix, vertices=nodes, directed=T)
+s
+
+list.edge.attributes(s)
+edge.attributes(s)$relation
+
+help <- subgraph.edges(s, E(s)[relation==2])
+
+plot(help,
+     layout=layout_with_kk,
+     main="Visualisierung Help",
+     edge.color="green",
+     edge.arrow.size=.5)
+
+```
+```{r}
+library(igraph)
+el <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/edges.csv", header=T, as.is=T, sep = ",")
+nodes <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/nodes.csv", header=T, as.is=T, sep = ",")
+edgematrix <-as.matrix(el)
+s <- graph_from_data_frame(d=edgematrix, vertices=nodes, directed=T)
+s
+
+list.edge.attributes(s)
+edge.attributes(s)$relation
+
+love <- subgraph.edges(s, E(s)[relation==3])
+
+plot(love,
+     layout=layout_with_kk,
+     main="Visualisierung Love",
+     edge.color="red")
+```
+#Visualisierung Beziehungen
+
+```{r}
+beziehung <- subgraph.edges(love, E(love)[complicated==1])
+beziehung
+
+plot(beziehung,
+     layout=layout_with_kk,
+     main="Visualisierung Beziehungen",
+     edge.color="red")
+```
+
+#multiples Netzwerk darstellen
+```{r}
+library(igraph)
+el <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/edges.csv", header=T, as.is=T, sep = ",")
+nodes <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/nodes.csv", header=T, as.is=T, sep = ",")
+edgematrix <-as.matrix(el)
+s <- graph_from_data_frame(d=edgematrix, vertices=nodes, directed=T)
+
+# definiert die Farbe der Relation
+E(s)[E(s)$relation == 1]$color <- "lightblue" 
+E(s)[E(s)$relation == 2]$color <- "grey20"
+E(s)[E(s)$relation == 3]$color <- "red"
+
+
+# Visualisierungsparameter festlegen
+par(mar=c(0,0,1,0)) 
+
+plot(s,
+     asp=0,
+     edge.arrow.size=.2,
+     vertex.color="gray90",
+     vertex.frame.color="white",
+     vertex.size=10,
+     layout=layout_with_kk,
+     edge.curved=curve_multiple(s),
+     main="Multiplexes Netzwerk, d.h. verschiedene Formen der Beziehung",
+     sub="n=38, hellblau=Zusammenarbeit, hellgrau=Ratsuche, rot=Beziehung")
+```
+
+#Teilnetzwerk Männer
+
+```{r}
+el <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/edges.csv", header=T, as.is=T, sep = ",")
+nodes <- read.csv("https://raw.githubusercontent.com/hdm-crpr/226305/master/data/crpr2/nodes.csv", header=T, as.is=T, sep = ",")
+edgematrix <-as.matrix(el)
+s <- graph_from_data_frame(d=edgematrix, vertices=nodes, directed=T)
+
+list.vertex.attributes(s)
+
+vertex_attr(s)$sex
+
+s_male <- delete_vertices(s, V(s)[sex != "1"]) 
+s_male
+
+s_male_cr <- delete_vertices(s_male, V(s_male)[crpr=="2"]) 
+s_male_cr
+
+plot(s_male_cr, 
+     layout=layout_with_kk,
+     main="Netzwerk der CR-Vertiefer",
+     edge.color="grey80",
+     edge.arrow.size=.3,
+     vertex.label.color="grey10",
+     vertex.color="pink",
+     sub="n=17, 48 Kanten, alle Beziehungsarten")
+```
+
+#Teilnetzwerk männliche Journalisten, überwiegend zusammenarbeiten und auf Tinder unterwegs sind
+```{r}
+s_male_cr
+plot(s_male_cr, 
+     layout=layout_with_kk,
+     main="Netzwerk der CR-Vertiefer",
+     edge.color="grey80",
+     edge.arrow.size=.3,
+     vertex.label.color="grey10",
+     vertex.color="pink",
+     sub="n=17, 48 Kanten, alle Beziehungsarten")
+
+s_male_cr
+
+s_male_cr_work
+```
+
